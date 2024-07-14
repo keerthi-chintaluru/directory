@@ -1,0 +1,40 @@
+import os
+import shutil
+
+# Define the directory to organize
+directory = '/path/to/your/directory'
+
+# Define the file types and their corresponding folders
+file_types = {
+    'images': ['.jpg', '.jpeg', '.png', '.gif'],
+    'documents': ['.txt', '.pdf', '.docx', '.xlsx'],
+    'videos': ['.mp4', '.avi', '.mov'],
+    'music': ['.mp3', '.wav', '.aac'],
+    'archives': ['.zip', '.rar', '.tar.gz'],
+}
+
+# Create folders if they do not exist
+for folder in file_types.keys():
+    folder_path = os.path.join(directory, folder)
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+# Move files to their corresponding folders
+for filename in os.listdir(directory):
+    file_path = os.path.join(directory, filename)
+    if os.path.isfile(file_path):
+        file_ext = os.path.splitext(filename)[1].lower()
+        moved = False
+        for folder, extensions in file_types.items():
+            if file_ext in extensions:
+                shutil.move(file_path, os.path.join(directory, folder, filename))
+                moved = True
+                break
+        # Optionally, handle files with unknown extensions
+        if not moved:
+            unknown_folder = os.path.join(directory, 'others')
+            if not os.path.exists(unknown_folder):
+                os.makedirs(unknown_folder)
+            shutil.move(file_path, os.path.join(unknown_folder, filename))
+
+print("File organization complete.")
